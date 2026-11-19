@@ -1,0 +1,103 @@
+# Halshow settings
+# This file is generated automatically.
+wm geometry . 777x785+30+81
+placeFrames 0.4300653594771242
+set ::ratio 0.4300653594771242
+set ::old_w_leftf 160
+set ::watchlist {
+    pin+lcec.0.EL5101_Y.enc-count
+    pin+lcec.0.EL5101_Y.enc-pos
+    pin+lcec.0.EL4034.aout-2-enable
+    pin+lcec.0.EL4034.aout-2-value
+    pin+pid.y.output
+    sig+vitesse-reelle-mpm
+    pin+lcec.0.EL1018_1.din-6
+    pin+lcec.0.EL1018_1.din-2-not
+    pin+lcec.0.EL1018_1.din-3-not
+    pin+lcec.0.EL1018_1.din-4-not
+    pin+joint.1.index-enable
+    pin+lcec.0.EL4034.aout-3-value
+    pin+lcec.0.EL2008_1.dout-6
+    pin+lcec.0.EL2008_1.dout-7
+    pin+lcec.0.EL2008_1.dout-5
+    pin+lcec.0.EL2008_1.dout-0
+    pin+lcec.0.EL2008_1.dout-1
+    pin+lcec.0.EL2008_1.dout-2
+    pin+lcec.0.EL2008_1.dout-3
+    pin+lcec.0.EL2008_1.dout-4
+    pin+lcec.0.EL4034.aout-3-enable
+    pin+lcec.0.EL4034.aout-2-scale
+    pin+lcec.0.EL4034.aout-3-scale
+    pin+lcec.0.EL2828.dout-1
+    pin+lcec.0.EL1018_2.din-0
+    pin+lcec.0.EL1018_2.din-1
+    pin+lcec.0.EL1018_2.din-2
+    pin+lcec.0.EL1018_2.din-3
+    pin+lcec.0.EL1018_2.din-4
+    pin+lcec.0.EL1018_2.din-5
+    pin+lcec.0.EL1018_2.din-6
+    pin+lcec.0.EL1018_2.din-7
+    pin+lcec.0.EL1008.din-0
+    pin+lcec.0.EL1008.din-1
+    pin+lcec.0.EL1008.din-2
+    pin+lcec.0.EL1008.din-3
+    pin+lcec.0.EL1008.din-4
+    pin+lcec.0.EL1008.din-5
+    pin+lcec.0.EL1008.din-6
+    pin+lcec.0.EL1008.din-7
+    pin+encoder.0.counts
+    pin+encoder.0.phase-A
+    pin+encoder.0.phase-B
+    pin+encoder.0.rawcounts
+    pin+encoder.0.position
+    pin+encoder.0.position-scale
+    sig+mpg-counts
+    pin+axis.x.jog-enable
+    pin+axis.x.jog-scale
+    pin+axis.x.jog-counts
+    pin+axis.x.jog-accel-fraction
+    pin+axis.x.jog-vel-mode
+    pin+lcec.0.EL5101_ENC.enc-count
+    pin+lcec.0.EL5101_ENC.enc-pos
+    pin+lcec.0.EL5101_ENC.enc-raw-count
+    pin+lcec.0.EL5101_ENC.enc-index-c-enable
+    pin+lcec.0.EL5101_ENC.enc-raw-freq
+    pin+lcec.0.EL5101_ENC.enc-raw-latch
+    pin+lcec.0.EL5101_ENC.enc-raw-period
+    pin+lcec.0.EL5101_ENC.enc-pos-scale
+    pin+spindle.0.speed-in
+    sig+spindle-vel-fb-rpm
+    pin+mb2hal.d1-alarm.00.int
+    pin+mb2hal.d1-alarm.01.int
+    pin+mb2hal.d1-alarm.01.float
+    pin+mb2hal.d1-avg-load.00.int
+    pin+mb2hal.d1-avg-load.00.float
+    pin+mb2hal.d1-avg-load.01.float
+    pin+mb2hal.d1-avg-load.01.int
+    pin+mb2hal.d1-alarm.00.float
+    pin+mb2hal.d1-alarm-reset.00
+    pin+ilowpass.0.out
+    pin+limit3.mpg.out
+    pin+conv-float-s32.1.in
+    pin+conv-float-s32.1.out
+    pin+joint.2.jog-counts
+    pin+axis.z.jog-counts
+    pin+encoder.0.counter-mode
+    pin+joint.0.homed
+    pin+joint.1.homed
+    pin+joint.2.homed
+    pin+pid.z.output
+    pin+lcec.0.EL4034.aout-1-value
+    pin+joint.1.error
+    pin+joint.1.neg-hard-limit
+    pin+joint.1.pos-hard-limit
+    pin+joint.1.pos-lim-sw-in
+    pin+joint.1.neg-lim-sw-in
+}
+set ::workmode watchhal
+set ::watchInterval 100
+set ::col1_width 100
+set ::ffmts 
+set ::ifmts 
+set ::alwaysOnTop 0
+set ::autoSaveWatchlist 1

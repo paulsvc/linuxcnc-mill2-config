@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pyvcp>
+  <vbox>
+    <label><text>"=== Z AXIS (JOINT 2) AUTO-TUNE ==="</text></label>
+    <label><text>"1. Jog Z to safe middle travel"</text></label>
+    <label><text>"2. Enable Tune Mode below"</text></label>
+    <label><text>"3. Set Effort &amp; click Start Auto-Tune"</text></label>
+    <label><text>"4. When Running LED turns off, uncheck Tune Mode"</text></label>
+    <label><text>"--------------------------------------"</text></label>
+
+    <hbox>
+      <checkbutton>
+        <halpin>"z-tune-mode"</halpin>
+        <text>"Enable Tune Mode (Disables PID)"</text>
+      </checkbutton>
+    </hbox>
+
+    <hbox>
+      <label><text>"Tune Effort (0.1 - 5.0): "</text></label>
+      <spinbox>
+        <halpin>"z-tune-effort"</halpin>
+        <min_>0.05</min_>
+        <max_>10.0</max_>
+        <initval>0.50</initval>
+        <resolution>0.05</resolution>
+        <format>"2.2f"</format>
+      </spinbox>
+    </hbox>
+
+    <hbox>
+      <label><text>"Tune Cycles (half-cycles): "</text></label>
+      <spinbox>
+        <halpin>"z-tune-cycles"</halpin>
+        <min_>10</min_>
+        <max_>200</max_>
+        <initval>50</initval>
+        <resolution>10</resolution>
+        <format>"3.0f"</format>
+      </spinbox>
+    </hbox>
+
+    <hbox>
+      <button>
+        <halpin>"z-tune-start"</halpin>
+        <text>"Start Auto-Tune"</text>
+      </button>
+      <label><text>"  Running: "</text></label>
+      <led>
+        <halpin>"z-tune-running"</halpin>
+        <size>20</size>
+        <on_color>"green"</on_color>
+        <off_color>"darkred"</off_color>
+      </led>
+    </hbox>
+
+    <label><text>"--------------------------------------"</text></label>
+    <label><text>"=== CURRENT / TUNED Z GAINS ==="</text></label>
+
+    <hbox>
+      <label><text>"P Gain: "</text></label>
+      <number>
+        <halpin>"z-pgain-display"</halpin>
+        <format>"4.4f"</format>
+      </number>
+    </hbox>
+
+    <hbox>
+      <label><text>"I Gain: "</text></label>
+      <number>
+        <halpin>"z-igain-display"</halpin>
+        <format>"4.4f"</format>
+      </number>
+    </hbox>
+
+    <hbox>
+      <label><text>"D Gain: "</text></label>
+      <number>
+        <halpin>"z-dgain-display"</halpin>
+        <format>"4.5f"</format>
+      </number>
+    </hbox>
+
+    <hbox>
+      <label><text>"Z Error (mm): "</text></label>
+      <number>
+        <halpin>"z-error-display"</halpin>
+        <format>"+3.4f"</format>
+      </number>
+    </hbox>
+
+    <hbox>
+      <label><text>"Z PID Out: "</text></label>
+      <number>
+        <halpin>"z-output-display"</halpin>
+        <format>"+4.3f"</format>
+      </number>
+    </hbox>
+  </vbox>
+</pyvcp>

@@ -1,0 +1,190 @@
+# Include your custom HAL commands here
+# This file will not be overwritten when you run PNCconf again
+#BP Vanne hydrau deblocage outil #EL1018 P1 & EL2828 P1
+net physical-button-passthrough lcec.0.EL1018_1.din-0 => lcec.0.EL2828.dout-0
+
+# --- Modbus Setup ---
+loadusr -Wn mb2hal mb2hal config=modbus.cfg
+loadusr -Wn hex-display ./hex_display.py
+
+
+# --- Chargement des composants nécessaires ---
+loadrt ddt count=2 
+loadrt mux8 count=1
+loadrt scale count=4
+loadrt lowpass count=2
+loadrt ilowpass count=1
+addf ddt.0 servo-thread
+addf ddt.1 servo-thread
+addf scale.0 servo-thread
+addf scale.1 servo-thread
+addf scale.2 servo-thread
+addf scale.3 servo-thread
+addf lowpass.0 servo-thread 
+addf lowpass.1 servo-thread 
+addf ilowpass.0 servo-thread
+loadrt conv_float_s32 count=2
+addf conv-float-s32.0 servo-thread
+addf conv-float-s32.1 servo-thread
+loadrt encoder num_chan=1
+addf encoder.update-counters servo-thread
+addf encoder.capture-position servo-thread
+addf mux8.0 servo-thread
+loadrt mult2 names=rps-to-rpm
+addf rps-to-rpm servo-thread
+setp rps-to-rpm.in1 60.0
+loadrt conv_s32_float count=1
+addf conv-s32-float.0 servo-thread
+loadrt abs count=3
+addf abs.0 servo-thread
+addf abs.1 servo-thread
+addf abs.2 servo-thread
+# Load components for 3-drive sign correction
+loadrt wcomp count=3
+loadrt mux2 count=3
+loadrt sum2 count=3
+loadrt limit3 names=limit3.mpg
+addf limit3.mpg servo-thread
+
+# Add to the servo thread
+addf wcomp.0 servo-thread
+addf wcomp.1 servo-thread
+addf wcomp.2 servo-thread
+addf mux2.0 servo-thread
+addf mux2.1 servo-thread
+addf mux2.2 servo-thread
+addf sum2.0 servo-thread
+addf sum2.1 servo-thread
+addf sum2.2 servo-thread
+
+
+setp lcec.0.EL5101_ENC.enc-pos-scale [SPINDLE_0]INPUT_SCALE
+# Connect the Position to the Motion Controller (for threading/tapping)
+net spindle-revs <= lcec.0.EL5101_ENC.enc-pos
+net spindle-revs => spindle.0.revs
+
+# --- SPINDLE VELOCITY FILTERING ---
+
+# 1. Connect Position to ddt to get raw velocity (RPS)
+net spindle-revs => ddt.1.in
+
+# 2. Feed raw velocity into the lowpass filter
+net spindle-vel-raw <= ddt.1.out
+net spindle-vel-raw => lowpass.1.in
+
+# 3. Set the filter "strength"
+setp lowpass.1.gain 0.05
+
+# 4. Connect filtered RPS to the existing signal 'spindle-vel-fb-rps'
+# This signal is already connected to spindle.0.speed-in in your main HAL
+net spindle-vel-fb-rps <= lowpass.1.out
+
+# 5. Connect the filtered RPS to your RPM converter (for PID feedback)
+net spindle-vel-fb-rps => rps-to-rpm.in0
+
+# 6. Send the final smoothed RPM to the PID feedback
+net spindle-vel-fb-rpm <= rps-to-rpm.out
+net spindle-vel-fb-rpm => pid.s.feedback
+net spindle-output <= pid.s.output
+net spindle-output => lcec.0.EL4034.aout-3-value
+
+net encoder-phase-a <= lcec.0.EL1018_2.din-4
+net encoder-phase-a => encoder.0.phase-A
+
+net encoder-phase-b <= lcec.0.EL1018_2.din-6
+net encoder-phase-b => encoder.0.phase-B
+setp encoder.0.counter-mode FALSE
+setp encoder.0.position-scale 1
+setp encoder.0.x4-mode FALSE 
+# --- Configuration du calcul de vitesse ---
+
+# 1. Régler le facteur de multiplication pour la conversion en mm/min
+setp scale.0.gain 60
+
+# 2. Régler le filtre passe-bas (valeur < 1.0 pour lisser)
+# Une valeur plus faible lisse davantage mais introduit un léger retard.
+# Commencez avec 0.1 et ajustez selon vos besoins.
+setp lowpass.0.gain 0.01              # <-- AJOUTÉ : Règle la force du filtre
+
+# 3. Connecter la position de la règle au calculateur de dérivée (ddt)
+net z-pos-fb => ddt.0.in
+
+# 4. Connecter la sortie du ddt (vitesse brute) à l'ENTRÉE du filtre
+# J'ai renommé le signal pour plus de clarté
+net z-vitesse-brute-s <= ddt.0.out => lowpass.0.in
+
+# 5. Connecter la SORTIE du filtre (vitesse lissée) à l'entrée du scale
+net z-vitesse-reelle-s <= lowpass.0.out => scale.0.in
+
+# 6. Connecter la sortie du scale (mm/min) au signal final
+net vitesse-reelle-mpm <= scale.0.out
+  
+##############################
+# lcec.0.EL1008.din-0 x1
+# lcec.0.EL1008.din-1 x10
+# lcec.0.EL1008.din-2 x100
+# lcec.0.EL1008.din-3 X
+# lcec.0.EL1008.din-4 Y
+# lcec.0.EL1008.din-5 Z
+# lcec.0.EL1008.din-6 4
+
+# --- Axis Selection Logic ---
+
+net sel-axis-x  <= lcec.0.EL1008.din-3 => axis.x.jog-enable
+net sel-axis-x  <= lcec.0.EL1008.din-3 => joint.0.jog-enable
+net sel-axis-y  <= lcec.0.EL1008.din-4 => axis.y.jog-enable
+net sel-axis-y  <= lcec.0.EL1008.din-4 => joint.1.jog-enable
+net sel-axis-z  <= lcec.0.EL1008.din-5 => axis.z.jog-enable
+net sel-axis-z  <= lcec.0.EL1008.din-5 => joint.2.jog-enable
+
+# --- Multiplier Selection Logic ---
+
+# 1. Connect the physical switch pins to the Mux selectors
+# Input for x1
+net scale-x1  <= lcec.0.EL1008.din-0 => mux8.0.sel0 
+# Input for x10
+net scale-x10 <= lcec.0.EL1008.din-1 => mux8.0.sel1
+# Input for x100
+net scale-x100 <= lcec.0.EL1008.din-2 => mux8.0.sel2
+
+# 2. Define the increments (in mm) for each switch position
+# Case x1 (Binary 001 = Index 1) -> 0.001mm
+setp mux8.0.in1 0.001
+
+# Case x10 (Binary 010 = Index 2) -> 0.01mm
+setp mux8.0.in2 0.01
+
+# Case x100 (Binary 100 = Index 4) -> 0.02mm
+setp mux8.0.in4 0.02
+
+# (Optional) Set a safety default (Index 0) to 0 or a tiny value
+setp mux8.0.in0 0.0
+
+net mpg-counts <= encoder.0.counts => axis.z.jog-counts
+
+
+# 2. Send the scale (from the mux) to all axes
+net mpg-scale <= mux8.0.out
+net mpg-scale => axis.x.jog-scale
+net mpg-scale => joint.0.jog-scale
+net mpg-scale => axis.y.jog-scale
+net mpg-scale => joint.1.jog-scale
+net mpg-scale => axis.z.jog-scale
+net mpg-scale => joint.2.jog-scale
+
+# 3. Send the raw counts to all axes
+net mpg-counts => joint.0.jog-counts axis.x.jog-counts
+net mpg-counts => joint.1.jog-counts axis.y.jog-counts
+net mpg-counts => joint.2.jog-counts axis.z.jog-counts
+
+# 3. Ensure 'Velocity Mode' is OFF (so it steps by distance, not speed)
+setp axis.x.jog-vel-mode 0
+setp joint.0.jog-vel-mode 0
+setp axis.y.jog-vel-mode 0
+setp joint.1.jog-vel-mode 0
+setp axis.z.jog-vel-mode 0
+setp joint.2.jog-vel-mode 0
+
+
+
+

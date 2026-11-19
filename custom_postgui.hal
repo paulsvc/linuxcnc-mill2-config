@@ -1,0 +1,92 @@
+# ==========================================
+# --- DRIVE 1 (X) CONNECTIONS ---
+# ==========================================
+# 1. Detect if the raw value is in the negative range (32768 to 65535)
+setp wcomp.0.min 32768
+setp wcomp.0.max 65535
+net d1-raw mb2hal.d1-avg-load.00.float => wcomp.0.in
+
+# 2. Prepare the negative conversion (Raw Value - 65536)
+net d1-raw => sum2.0.in0
+setp sum2.0.in1 -65536
+
+# 3. Choose: If raw > 32767, use the negative version; otherwise use raw.
+net d1-is-neg wcomp.0.out => mux2.0.sel
+net d1-raw => mux2.0.in0
+net d1-neg-val sum2.0.out => mux2.0.in1
+
+# 4. Scale and Absolute for the Bar
+net d1-corrected mux2.0.out => scale.1.in
+setp scale.1.gain 1
+net d1-scaled scale.1.out => abs.0.in
+net d1-abs abs.0.out => pyvcp.d1-load-bar
+
+# Alarm
+# This automatically handles the 32-bit sign bit correctly if NELEMENTS=2
+#net d1-alarm-raw mb2hal.d1-alarm.00.int => conv-s32-float.0.in
+
+# 3. Use the float in your display
+#net d1-alarm-final conv-s32-float.0.out => pyvcp.d1-alarm-val
+net d1-alarm-raw mb2hal.d1-alarm.00.int => hex-display.d1-in
+net d1-alarm-ready hex-display.d1-out => pyvcp.d1-alarm-hex-display
+
+# ==========================================
+# --- DRIVE 2 (Y) CONNECTIONS ---
+# ==========================================
+setp wcomp.1.min 32768
+setp wcomp.1.max 65535
+net d2-raw mb2hal.d2-avg-load.00.float => wcomp.1.in
+
+net d2-raw => sum2.1.in0
+setp sum2.1.in1 -65536
+
+net d2-is-neg wcomp.1.out => mux2.1.sel
+net d2-raw => mux2.1.in0
+net d2-neg-val sum2.1.out => mux2.1.in1
+
+net d2-corrected mux2.1.out => scale.2.in
+setp scale.2.gain 1
+net d2-scaled scale.2.out => abs.1.in
+net d2-abs abs.1.out => pyvcp.d2-load-bar
+
+# Alarm
+net d2-alarm-raw mb2hal.d2-alarm.00.int => hex-display.d2-in
+net d2-alarm-ready hex-display.d2-out => pyvcp.d2-alarm-hex-display
+
+# ==========================================
+# --- DRIVE 3 (Z) CONNECTIONS ---
+# ==========================================
+setp wcomp.2.min 32768
+setp wcomp.2.max 65535
+net d3-raw mb2hal.d3-avg-load.00.float => wcomp.2.in
+
+net d3-raw => sum2.2.in0
+setp sum2.2.in1 -65536
+
+net d3-is-neg wcomp.2.out => mux2.2.sel
+net d3-raw => mux2.2.in0
+net d3-neg-val sum2.2.out => mux2.2.in1
+
+net d3-corrected mux2.2.out => scale.3.in
+setp scale.3.gain 0.1
+net d3-scaled scale.3.out => abs.2.in
+net d3-abs abs.2.out => pyvcp.d3-load-bar
+
+# Alarm
+net d3-alarm-raw mb2hal.d3-alarm.00.int => hex-display.d3-in
+net d3-alarm-ready hex-display.d3-out => pyvcp.d3-alarm-hex-display
+
+# ==========================================
+# --- Z AXIS AUTO-TUNE (SERVO MONITOR TAB) ---
+# ==========================================
+setp pid.z.tune-type 0
+net z-tune-mode     servo_monitor.z-tune-mode    => pid.z.tune-mode
+net z-tune-effort   servo_monitor.z-tune-effort  => hex-display.z-tune-effort-in
+net z-tune-cycles   servo_monitor.z-tune-cycles  => hex-display.z-tune-cycles-in
+net z-tune-start    servo_monitor.z-tune-start   => hex-display.z-tune-start-in
+net z-tune-running  hex-display.z-tune-running   => servo_monitor.z-tune-running
+net z-pgain-disp    hex-display.z-pgain-out      => servo_monitor.z-pgain-display
+net z-igain-disp    hex-display.z-igain-out      => servo_monitor.z-igain-display
+net z-dgain-disp    hex-display.z-dgain-out      => servo_monitor.z-dgain-display
+net z-error-disp    pid.z.error                  => servo_monitor.z-error-display
+net z-output        => servo_monitor.z-output-display

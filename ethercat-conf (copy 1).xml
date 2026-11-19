@@ -1,0 +1,18 @@
+<masters>
+  <master idx="0" appTimePeriod="1000000" refClockSyncCycles="5">
+    <slave idx="0" type="EK1100" name="EK1100"/>
+    <slave idx="1" type="EL2904" name="EL2904"/>
+    <slave idx="2" type="EL2008" name="EL2008_1"/>
+    <slave idx="3" type="EL1018" name="EL1018_1"/>
+    <slave idx="4" type="EL5101" name="EL5101_X"/>
+    <slave idx="5" type="EL5101" name="EL5101_Y"/>
+    <slave idx="6" type="EL5101" name="EL5101_Z"/>
+    <slave idx="7" type="EL4034" name="EL4034"/>
+    <slave idx="8" type="EL2008" name="EL2008_2"/>
+    <slave idx="9" type="EL1008" name="EL1008"/>
+    <slave idx="10" type="EL1018" name="EL1018_2"/>
+    <slave idx="11" type="EL5101" name="EL5101_ENC"/>
+    <slave idx="12" type="EL2828" name="EL2828"/>
+  </master>
+</masters>
+

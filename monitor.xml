@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pyvcp>
+  <tabs>
+    <names>["Servo Stats"]</names>
+    <vbox> <label><text>"--- DRIVE 1 (X) ---"</text></label>
+      <bar>
+        <halpin>"d1-load-bar"</halpin>
+        <min_>0</min_>
+        <max_>100</max_>
+      </bar>
+      <hbox>
+        <label><text>"Alarm Code: "</text></label>
+    <number>
+        <halpin>"d1-alarm-hex-display"</halpin>
+        <format>"2.0f"</format>
+    </number>
+    <button>
+    <halpin>"reset-d1-alarm"</halpin>
+    <text>"Reset Alarm D1"</text>
+	</button>
+      </hbox>
+
+      <label><text>"--- DRIVE 2 (Y) ---"</text></label>
+		<bar>
+        <halpin>"d2-load-bar"</halpin>
+        <min_>0</min_>
+        <max_>100</max_>
+      </bar>
+      <hbox>
+        <label><text>"Alarm Code: "</text></label>
+    <number>
+        <halpin>"d2-alarm-hex-display"</halpin>
+        <format>"2.0f"</format>
+    </number>
+    <button>
+    <halpin>"reset-d2-alarm"</halpin>
+    <text>"Reset Alarm D2"</text>
+	</button>
+      </hbox>
+
+      <label><text>"--- DRIVE 3 (Z) ---"</text></label>
+      <bar>
+        <halpin>"d3-load-bar"</halpin>
+        <min_>0</min_>
+        <max_>100</max_>
+      </bar>
+      <hbox>
+        <label><text>"Alarm Code: "</text></label>
+    <number>
+        <halpin>"d3-alarm-hex-display"</halpin>
+        <format>"2.0f"</format>
+    </number>
+    <button>
+    <halpin>"reset-d3-alarm"</halpin>
+    <text>"Reset Alarm D3"</text>
+	</button>
+      </hbox>
+    </vbox>
+  </tabs>
+</pyvcp>
